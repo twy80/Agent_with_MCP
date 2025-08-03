@@ -1,0 +1,13 @@
+[project]
+name = "agent-with-mcp"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain>=0.3.27",
+    "langchain-anthropic>=0.3.18",
+    "langchain-google-genai>=2.1.8",
+    "langchain-openai>=0.3.28",
+    "streamlit>=1.47.1",
+]
