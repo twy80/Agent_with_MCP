@@ -156,7 +156,7 @@ def get_langchain_tools() -> List[StructuredTool]:
 def get_chat_model(provider: str, model_name: str):
     if provider == "OpenAI": return ChatOpenAI(model=model_name, temperature=0.7, streaming=True)
     if provider == "Anthropic": return ChatAnthropic(model_name=model_name, temperature=0.7, streaming=True)
-    if provider == "Google Gemini": return ChatGoogleGenerativeAI(model=model_name, temperature=0.7, convert_system_message_to_human=True)
+    if provider == "Google Gemini": return ChatGoogleGenerativeAI(model=model_name, temperature=0.7)
     raise ValueError(f"Unsupported provider: {provider}")
 
 def create_langchain_agent(chat_model, tools):
@@ -167,7 +167,7 @@ def create_langchain_agent(chat_model, tools):
         ("placeholder", "{agent_scratchpad}"),
     ])
     agent = create_tool_calling_agent(chat_model, tools, prompt)
-    return AgentExecutor(agent=agent, tools=tools, verbose=True)
+    return AgentExecutor(agent=agent, tools=tools, verbose=False)
 
 # --- 3. Streamlit UI ---
 
@@ -180,7 +180,7 @@ def main():
     with st.sidebar:
         st.header("⚙️ Configuration")
         model_provider = st.selectbox("Select Model Provider", ["OpenAI", "Anthropic", "Google Gemini"])
-        model_name = st.selectbox("Model", {"OpenAI": ["gpt-4o", "gpt-4o-mini"], "Anthropic": ["claude-3-5-sonnet-20240620"], "Google Gemini": ["gemini-1.5-pro-latest"]}[model_provider])
+        model_name = st.selectbox("Model", {"OpenAI": ["gpt-4o", "gpt-4o-mini"], "Anthropic": ["claude-3-5-sonnet-20240620"], "Google Gemini": ["gemini-2.5-flash", "gemini-2.5-pro"]}[model_provider])
 
         st.divider()
         st.subheader("🔧 MCP Server Configuration")
@@ -262,9 +262,11 @@ def main():
                                 if isinstance(block, dict) and block.get("type") == "text":
                                     full_response += block.get("text", "")
                         
-                        output_placeholder.markdown(tool_log + "\n\n---\n" + full_response + "▌")
+                        # output_placeholder.markdown(tool_log + "\n\n---\n" + full_response + "▌")
+                        output_placeholder.markdown(tool_log + "\n\n\n" + full_response + "▌")
                 
-                output_placeholder.markdown(tool_log + "\n\n---" + full_response)
+                # output_placeholder.markdown(tool_log + "\n\n---" + full_response)
+                output_placeholder.markdown(tool_log + "\n\n" + full_response)
                 st.session_state.messages.append(AIMessage(content=full_response))
 
             except Exception as e:
@@ -272,3 +274,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+    if st.sidebar.button("Finish"):
+        os._exit(0)
