@@ -172,7 +172,7 @@ def create_langchain_agent(chat_model, tools):
 # --- 3. Streamlit UI ---
 
 def main():
-    st.title("🤖 LangChain MCP Chatbot (Final Version)")
+    st.title("🤖 LangChain MCP Chatbot")
 
     if "messages" not in st.session_state: st.session_state.messages = []
     if "mcp_config_text" not in st.session_state: st.session_state.mcp_config_text = ""
